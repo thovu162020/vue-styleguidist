@@ -100,7 +100,7 @@ Adds a little button on the top right hand corner of the editor to copy the cont
 
 Type: `Function`, optional
 
-> **Warning:** You may easily break Vue styleguidist using this options, try to use [webpackConfig](#webpackconfig) option instead.
+> **Warning:** You are likely to break Vue styleguidist using this options, try to use [webpackConfig](#webpackconfig) option instead.
 
 Allows you to modify webpack config without any restrictions.
 
@@ -146,9 +146,21 @@ module.exports = {
 
 ## `editorConfig`
 
-Type: `Object`, default: [scripts/schemas/config.js](https://github.com/vue-styleguidist/vue-styleguidist/tree/master/packages/vue-styleguidist/scripts/schemas/config.js#L96)
+Type: `Object`, default: [scripts/schemas/config.js](https://github.com/vue-styleguidist/vue-styleguidist/blob/master/packages/vue-styleguidist/src/scripts/schemas/config.ts#L103-L112)
 
 Source code editor options, see [CodeMirror docs](https://codemirror.net/doc/manual.html#config) for all available options.
+
+> **NOTE :** From version 4.0.0, Prism is the editor by default as it is much lighter. Turn off [simpleEditor](#simpleEditor) to use CodeMirror and leverage this config.
+>
+> ```js
+> module.exports = {
+>   // ...
+>   editorConfig: {
+>     theme: 'base16-light'
+>   },
+>   simpleEditor: false
+> }
+> ```
 
 ## `getExampleFilename`
 
@@ -242,7 +254,7 @@ By default, `vue-styleguidist` registers all components globally. This can be an
 - Multiple components are sharing the same name OR
 - Components are changing behaviour if another component is registered
 
-In this case, just set `locallyRegisterComponents` to `true`. It will register components only in the examples of their documentation.
+In this case, set `locallyRegisterComponents` to `true`. It will register components only in the examples of their documentation.
 
 Though if you need to register an additionl component and you are forced to use this behaviour, proceed like this:
 
@@ -504,7 +516,7 @@ See examples of [sections configuration](/docs/Components.md#sections).
 
 Type: `String`, default: `0.0.0.0`
 
-Dev server host name.
+Dev server name.
 
 ## `serverPort`
 
@@ -701,6 +713,29 @@ Defines the initial state of the props and methods tab:
 - `collapse`: collapses the tab by default.
 - `hide`: hide the tab and it can´t be toggled in the UI.
 - `expand`: expand the tab by default.
+
+## `validExtends`
+
+Type: `Function`, default: `fileFullPath => !/[\\/]node_modules[\\/]/.test(fileFullPath)`
+
+Function directly passed to `vue-docgen-api` to determine if a component that extends another should be parsed.
+
+The following lines will allow parsing extended components from node package `@my-library/components`.
+
+```javascript
+module.exports = {
+  validExtends(fullFilePath) {
+    return (
+      /[\\/]@my-library[\\/]components[\\/]/.test(fullFilePath) ||
+      !/[\\/]node_modules[\\/]/.test(fullFilePath)
+    )
+  }
+}
+```
+
+**NOTE** If `vue-docgen-api` fails to parse the targetted component, it will log a warning. It is not blocking but it is annoying.
+
+**NOTE** If you allow all of `node_modules` to try to be parsed, you might hurt performance. Use it responsibly.
 
 ## `verbose`
 

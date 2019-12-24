@@ -3,6 +3,94 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.2.2](https://github.com/vue-styleguidist/vue-styleguidist/compare/v4.2.1...v4.2.2) (2019-12-18)
+
+
+### Performance Improvements
+
+* **docgen:** make sure optional prop are optional ([3695ed6](https://github.com/vue-styleguidist/vue-styleguidist/commit/3695ed6632612de3ad68794a6fd3a62dd4e46533))
+
+
+
+
+
+# [4.2.0](https://github.com/vue-styleguidist/vue-styleguidist/compare/v4.1.2...v4.2.0) (2019-12-10)
+
+
+### Features
+
+* detect model property ([1c28167](https://github.com/vue-styleguidist/vue-styleguidist/commit/1c28167)), closes [#654](https://github.com/vue-styleguidist/vue-styleguidist/issues/654)
+* **docgen:** allow to customize validExtends ([eb966c5](https://github.com/vue-styleguidist/vue-styleguidist/commit/eb966c5))
+
+
+
+
+
+## [4.1.2](https://github.com/vue-styleguidist/vue-styleguidist/compare/v4.1.1...v4.1.2) (2019-12-08)
+
+**Note:** Version bump only for package vue-docgen-api
+
+
+
+
+
+## [4.1.1](https://github.com/vue-styleguidist/vue-styleguidist/compare/v4.1.0...v4.1.1) (2019-12-05)
+
+**Note:** Version bump only for package vue-docgen-api
+
+
+
+
+
+# [4.1.0](https://github.com/vue-styleguidist/vue-styleguidist/compare/v4.0.8...v4.1.0) (2019-12-04)
+
+
+### Bug Fixes
+
+* **docgen:** support [@values](https://github.com/values) on classPropHandler ([4b7f8b6](https://github.com/vue-styleguidist/vue-styleguidist/commit/4b7f8b6))
+
+
+### Features
+
+* **docgen:** multi-components in a file ([3790837](https://github.com/vue-styleguidist/vue-styleguidist/commit/3790837))
+
+
+
+
+
+## [4.0.7](https://github.com/vue-styleguidist/vue-styleguidist/compare/v4.0.6...v4.0.7) (2019-12-01)
+
+
+### Bug Fixes
+
+* **docgen:** avoid incorrect of getting nested '}' param type ([5df05e0](https://github.com/vue-styleguidist/vue-styleguidist/commit/5df05e0))
+
+
+
+
+
+## [4.0.5](https://github.com/vue-styleguidist/vue-styleguidist/compare/v4.0.4...v4.0.5) (2019-11-20)
+
+
+### Bug Fixes
+
+* **docgen:** ensure custom handlers are actually run ([7a0ac62](https://github.com/vue-styleguidist/vue-styleguidist/commit/7a0ac62))
+
+
+
+
+
+## [4.0.4](https://github.com/vue-styleguidist/vue-styleguidist/compare/v4.0.3...v4.0.4) (2019-11-19)
+
+
+### Bug Fixes
+
+* **docgen:** fixed description extraction on non-SFC components ([85626fc](https://github.com/vue-styleguidist/vue-styleguidist/commit/85626fc))
+
+
+
+
+
 ## [4.0.1](https://github.com/vue-styleguidist/vue-styleguidist/compare/v4.0.0...v4.0.1) (2019-11-15)
 
 **Note:** Version bump only for package vue-docgen-api

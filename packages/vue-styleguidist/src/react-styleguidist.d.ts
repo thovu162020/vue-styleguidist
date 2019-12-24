@@ -4,14 +4,14 @@
 
 declare module 'react-styleguidist/lib/loaders/utils/getNameFromFilePath' {
 	const getNameFromFilePath: (input: string) => string
-	export = getNameFromFilePath
+	export default getNameFromFilePath
 }
 
 declare module 'react-styleguidist/lib/loaders/utils/requireIt' {
 	import * as b from '@babel/types'
 
 	const requireIt: (input: string) => { require: string; toAST: () => b.Node } | any
-	export = requireIt
+	export default requireIt
 }
 
 declare module 'react-styleguidist/lib/loaders/utils/slugger' {
@@ -19,40 +19,40 @@ declare module 'react-styleguidist/lib/loaders/utils/slugger' {
 		slug: (input: string) => string
 		reset(): void
 	}
-	export = slugger
+	export default slugger
 }
 
 declare module 'react-styleguidist/lib/loaders/utils/getComponentFiles' {
 	const getComponentFiles: (
-		components: string | string[] | undefined,
+		components: (() => string | string[]) | string | string[] | undefined,
 		configDir: string,
 		ignore: string[]
 	) => string[]
-	export = getComponentFiles
+	export default getComponentFiles
 }
 
 declare module 'react-styleguidist/lib/loaders/utils/highlightCodeInMarkdown' {
 	const highlightCodeInMarkdown: (markdown: string) => string
-	export = highlightCodeInMarkdown
+	export default highlightCodeInMarkdown
 }
 
 declare module 'react-styleguidist/lib/loaders/utils/removeDoclets' {
 	const removeDoclets: (description: string) => string
-	export = removeDoclets
+	export default removeDoclets
 }
 
 declare module 'react-styleguidist/lib/loaders/utils/sortProps' {
 	import { PropDescriptor } from 'vue-docgen-api'
 
 	function sortProps(props: PropDescriptor[]): PropDescriptor[]
-	export = sortProps
+	export default sortProps
 }
 
 declare module 'react-styleguidist/lib/loaders/utils/getAllContentPages' {
 	import { ProcessedSection as SectionPages } from 'types/Section'
 
 	function getAllContentPages(sections: SectionPages[]): string[]
-	export = getAllContentPages
+	export default getAllContentPages
 }
 declare module 'react-styleguidist/lib/loaders/utils/getComponentFilesFromSections' {
 	import { Section as SectionFiles } from 'types/Section'
@@ -62,29 +62,29 @@ declare module 'react-styleguidist/lib/loaders/utils/getComponentFilesFromSectio
 		componentDir?: string,
 		ignore?: string | string[]
 	): string[]
-	export = getComponentFilesFromSections
+	export default getComponentFilesFromSections
 }
 declare module 'react-styleguidist/lib/loaders/utils/getComponentPatternsFromSections' {
 	import { Section as SectionPattern } from 'types/Section'
 
 	function getComponentPatternsFromSections(sections: SectionPattern[]): string[]
-	export = getComponentPatternsFromSections
+	export default getComponentPatternsFromSections
 }
 declare module 'react-styleguidist/lib/loaders/utils/filterComponentsWithExample' {
 	import { ProcessedSection as SectionFilter } from 'types/Section'
 
 	function filterComponentsWithExample(sections: SectionFilter[]): SectionFilter[]
-	export = filterComponentsWithExample
+	export default filterComponentsWithExample
 }
 
 declare module 'react-styleguidist/lib/loaders/utils/chunkify' {
-	import { Example } from 'types/Example'
+	import { ExampleLoader } from 'types/Example'
 
 	function chunkify(
 		markdown: string | false,
-		updateExample: (p: Example, resourcePath: string) => Example,
+		updateExample: (p: ExampleLoader, resourcePath: string) => ExampleLoader,
 		playgroundLangs: string[]
-	): any[]
+	): ExampleLoader[]
 	export default chunkify
 }
 declare module 'react-styleguidist/lib/loaders/utils/expandDefaultComponent' {
@@ -93,16 +93,16 @@ declare module 'react-styleguidist/lib/loaders/utils/expandDefaultComponent' {
 }
 declare module 'react-styleguidist/lib/loaders/utils/getImports' {
 	const getImports: (code: string) => string[]
-	export = getImports
+	export default getImports
 }
 
 // script
 
 declare module 'react-styleguidist/lib/scripts/make-webpack-config' {
 	import { Configuration } from 'webpack'
-	import { ProcessedStyleGuidistConfigObject } from 'types/StyleGuide'
+	import { StyleguidistConfig } from 'types/StyleGuide'
 
-	const makeWebpackConfig: (config: ProcessedStyleGuidistConfigObject, env: string) => Configuration
+	const makeWebpackConfig: (config: StyleguidistConfig, env: string) => Configuration
 	export default makeWebpackConfig
 }
 
@@ -112,7 +112,7 @@ declare module 'react-styleguidist/lib/scripts/utils/StyleguidistOptionsPlugin' 
 	class StyleguidistOptionsPlugin extends Plugin {
 		constructor(options: any)
 	}
-	export = StyleguidistOptionsPlugin
+	export default StyleguidistOptionsPlugin
 }
 
 declare module 'react-styleguidist/lib/scripts/utils/findFileCaseInsensitive' {
@@ -125,7 +125,7 @@ declare module 'react-styleguidist/lib/scripts/utils/findFileCaseInsensitive' {
 
 declare module 'react-styleguidist/lib/scripts/utils/getUserPackageJson' {
 	function getUserPackageJson(): { name: string }
-	export = getUserPackageJson
+	export default getUserPackageJson
 }
 
 declare module 'react-styleguidist/lib/scripts/utils/error' {
@@ -134,18 +134,18 @@ declare module 'react-styleguidist/lib/scripts/utils/error' {
 		anchor: string
 		extra: string
 	}
-	export = StyleguidistError
+	export default StyleguidistError
 }
 
 declare module 'react-styleguidist/lib/scripts/utils/sanitizeConfig' {
-	import { ProcessedStyleGuidistConfigObject as StyleGuidistConfigObjectSanitizeConfig } from 'types/StyleGuide'
+	import { StyleguidistConfig as StyleGuidistConfigObjectSanitizeConfig } from 'types/StyleGuide'
 
 	function sanitizeConfig(
 		config: StyleGuidistConfigObjectSanitizeConfig,
 		schema: any,
 		configDir: string
 	): StyleGuidistConfigObjectSanitizeConfig
-	export = sanitizeConfig
+	export default sanitizeConfig
 }
 
 declare module 'react-styleguidist/lib/scripts/logger' {
@@ -162,7 +162,7 @@ declare module 'react-styleguidist/lib/scripts/logger' {
 			debug?(message: string): void
 		}
 	): void
-	export = setupLogger
+	export default setupLogger
 }
 
 // client
@@ -205,7 +205,7 @@ declare module 'react-styleguidist/lib/client/utils/handleHash' {
 
 declare module 'rsg-components/StyleGuide' {
 	import { FunctionComponent } from 'react'
-	import { StyleGuidistConfigObject as StyleGuideStyleGuidistConfigObject } from 'types/StyleGuide'
+	import { StyleguidistConfig as StyleGuideStyleGuidistConfigObject } from 'types/StyleGuide'
 	import { ProcessedSection as StyleGuideSection } from 'types/Section'
 	import { DISPLAY_MODE as StyleGuide_DISPLAY_MODE } from 'types/enums'
 
@@ -224,7 +224,7 @@ declare module 'rsg-components/StyleGuide' {
 }
 
 declare module 'rsg-components/slots' {
-	import { StyleGuidistConfigObject as slotsStyleGuidistConfigObject } from 'types/StyleGuide'
+	import { StyleguidistConfig as slotsStyleGuidistConfigObject } from 'types/StyleGuide'
 
 	const slots: (config?: slotsStyleGuidistConfigObject) => any
 	export default slots

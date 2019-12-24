@@ -8,9 +8,9 @@ import MiniHtmlWebpackTemplate from '@vxna/mini-html-webpack-template'
 import merge from 'webpack-merge'
 import forEach from 'lodash/forEach'
 import isFunction from 'lodash/isFunction'
-import { ProcessedStyleGuidistConfigObject } from 'types/StyleGuide'
 import makeWebpackConfig from 'react-styleguidist/lib/scripts/make-webpack-config'
 import StyleguidistOptionsPlugin from 'react-styleguidist/lib/scripts/utils/StyleguidistOptionsPlugin'
+import { StyleguidistConfig } from '../types/StyleGuide'
 import mergeWebpackConfig from './utils/mergeWebpackConfig'
 
 const RENDERER_REGEXP = /Renderer$/
@@ -18,7 +18,7 @@ const RENDERER_REGEXP = /Renderer$/
 const sourceDir = path.resolve(__dirname, '../client')
 
 export default function(
-	config: ProcessedStyleGuidistConfigObject,
+	config: StyleguidistConfig,
 	env: 'development' | 'production' | 'none'
 ): Configuration {
 	process.env.NODE_ENV = process.env.NODE_ENV || env
@@ -134,15 +134,16 @@ export default function(
 				new CleanWebpackPlugin({
 					verbose: config.verbose === true
 				}),
-				new CopyWebpackPlugin(
-					config.assetsDir
-						? [
+				// only add plugin if assetsDir is specified
+				...(config.assetsDir
+					? [
+							new CopyWebpackPlugin([
 								{
 									from: config.assetsDir
 								}
-						  ]
-						: []
-				)
+							])
+					  ]
+					: [])
 			],
 			optimization
 		})

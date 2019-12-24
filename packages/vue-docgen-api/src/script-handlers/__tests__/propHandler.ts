@@ -28,12 +28,16 @@ describe('propHandler', () => {
 		mockGetPropDescriptor.mockReturnValue(mockPropDescriptor)
 	})
 
-	function tester(src: string, matchedObj: any, plugins?: ParserPlugin[]) {
+	function parserTest(src: string, plugins?: ParserPlugin[]): PropDescriptor {
 		const def = parse(src, plugins)
 		if (def) {
 			propHandler(documentation, def)
 		}
-		expect(mockPropDescriptor).toMatchObject(matchedObj)
+		return mockPropDescriptor
+	}
+
+	function tester(src: string, matchedObj: any, plugins?: ParserPlugin[]) {
+		expect(parserTest(src, plugins)).toMatchObject(matchedObj)
 	}
 
 	describe('base', () => {
@@ -304,15 +308,14 @@ describe('propHandler', () => {
 				'}'
 			].join('\n')
 
-			tester(src, {
-				defaultValue: {
-					value: [
-						'function(){', // leave these comments
-						'    return ["normal"];', // with this format
-						'}' // to avoid prettier formatting
-					].join('\n')
-				}
-			})
+			expect(parserTest(src).defaultValue).toMatchInlineSnapshot(`
+			Object {
+			  "func": false,
+			  "value": "function(){
+			    return [\\"normal\\"];
+			}",
+			}
+		`)
 		})
 	})
 
@@ -376,6 +379,86 @@ describe('propHandler', () => {
 			})
 			expect(documentation.getPropDescriptor).not.toHaveBeenCalledWith('value')
 			expect(documentation.getPropDescriptor).toHaveBeenCalledWith('v-model')
+		})
+
+		it('should set the v-model instead of value with model property', () => {
+			const src = `
+        export default {
+		  model:{
+			prop: 'value'
+		  },
+          props: {
+            /**
+             * Value of the field
+             */
+            value: {
+				required: true,
+				type: undefined
+			}
+          }
+        }
+        `
+			tester(src, {
+				description: 'Value of the field'
+			})
+			expect(documentation.getPropDescriptor).not.toHaveBeenCalledWith('value')
+			expect(documentation.getPropDescriptor).toHaveBeenCalledWith('v-model')
+		})
+
+		it('should not set the v-model instead of value if model property has only event', () => {
+			const src = `
+        export default {
+		  model:{
+			event: 'change'
+		  },
+          props: {
+            /**
+             * Value of the field
+             */
+            value: {
+				required: true,
+				type: undefined
+			}
+          }
+        }
+        `
+			tester(src, {
+				description: 'Value of the field'
+			})
+			expect(documentation.getPropDescriptor).not.toHaveBeenCalledWith('v-model')
+			expect(documentation.getPropDescriptor).toHaveBeenCalledWith('value')
+		})
+	})
+
+	describe('@values tag parsing', () => {
+		it('should parse the @values tag as its own', () => {
+			const src = `
+	export default {
+	  props: {
+		/**
+		 * color of the component
+		 * @values dark, light
+		 * @author me
+		 */
+		color: {
+			type: string
+		}
+	  }
+	}
+	`
+			tester(src, {
+				description: 'color of the component',
+				values: ['dark', 'light'],
+				tags: {
+					author: [
+						{
+							description: 'me',
+							title: 'author'
+						}
+					]
+				}
+			})
+			expect(documentation.getPropDescriptor).toHaveBeenCalledWith('color')
 		})
 	})
 

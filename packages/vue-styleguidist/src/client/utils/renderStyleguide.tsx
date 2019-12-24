@@ -3,12 +3,12 @@ import slots from 'rsg-components/slots'
 import StyleGuide from 'rsg-components/StyleGuide'
 import getRouteData from 'react-styleguidist/lib/client/utils/getRouteData'
 import getPageTitle from 'react-styleguidist/lib/client/utils/getPageTitle'
-import { StyleGuideObject } from 'types/StyleGuide'
+import { StyleGuideObject } from '../../types/StyleGuide'
 import getComponentsFromSections from './getComponentsFromSections'
 import globalizeComponent from './globalizeComponent'
 import processSections from './processSections'
 
-export const RenderJsxContext = React.createContext({})
+export const RenderJsxContext = React.createContext<React.ReactNode>(<div />)
 export const VueComponentMapContext = React.createContext({})
 
 /**

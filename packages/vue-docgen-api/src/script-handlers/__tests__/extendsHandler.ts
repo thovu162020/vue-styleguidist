@@ -37,7 +37,10 @@ describe('extendsHandler', () => {
 		const ast = babylon().parse(src)
 		const path = resolveExportedComponent(ast).get('default')
 		if (path) {
-			extendsHandler(doc, path, ast, { filePath: '' })
+			extendsHandler(doc, path, ast, {
+				filePath: '',
+				validExtends: (fullFilePath: string) => !/[\\/]node_modules[\\/]/.test(fullFilePath)
+			})
 		}
 	}
 
@@ -50,11 +53,11 @@ describe('extendsHandler', () => {
 		].join('\n')
 		parseItExtends(src)
 		expect(parseFile).toHaveBeenCalledWith(
-			doc,
 			expect.objectContaining({
 				filePath: './component/full/path',
 				nameFilter: ['default']
-			})
+			}),
+			doc
 		)
 	})
 
@@ -67,11 +70,11 @@ describe('extendsHandler', () => {
 		].join('\n')
 		parseItExtends(src)
 		expect(parseFile).toHaveBeenCalledWith(
-			doc,
 			expect.objectContaining({
 				filePath: './component/full/path',
 				nameFilter: ['default']
-			})
+			}),
+			doc
 		)
 	})
 
@@ -84,11 +87,11 @@ describe('extendsHandler', () => {
 		].join('\n')
 		parseItExtends(src)
 		expect(parseFile).toHaveBeenCalledWith(
-			doc,
 			expect.objectContaining({
 				filePath: './component/full/path',
 				nameFilter: ['default']
-			})
+			}),
+			doc
 		)
 	})
 
@@ -101,11 +104,11 @@ describe('extendsHandler', () => {
 		].join('\n')
 		parseItExtends(src)
 		expect(parseFile).toHaveBeenCalledWith(
-			doc,
 			expect.objectContaining({
 				filePath: './component/full/path',
 				nameFilter: ['default']
-			})
+			}),
+			doc
 		)
 	})
 })

@@ -20,6 +20,8 @@ export default async function propHandler(documentation: Documentation, path: No
 			return
 		}
 
+		const modelPropertyName = getModelPropName(path)
+
 		const propsValuePath = propsPath[0].get('value')
 
 		if (bt.isObjectExpression(propsValuePath.node)) {
@@ -38,9 +40,10 @@ export default async function propHandler(documentation: Documentation, path: No
 				const jsDocTags: BlockTag[] = jsDoc.tags ? jsDoc.tags : []
 
 				// if it's the v-model describe it only as such
-				const propName = jsDocTags.some(t => t.title === 'model')
-					? 'v-model'
-					: propNode.key.name || propNode.key.value
+				const propertyName = propNode.key.name || propNode.key.value
+				const isPropertyModel =
+					jsDocTags.some(t => t.title === 'model') || propertyName === modelPropertyName
+				const propName = isPropertyModel ? 'v-model' : propertyName
 
 				const propDescriptor = documentation.getPropDescriptor(propName)
 
@@ -54,14 +57,7 @@ export default async function propHandler(documentation: Documentation, path: No
 					propDescriptor.tags = transformTagsIntoObject(jsDocTags)
 				}
 
-				if (propDescriptor.tags && propDescriptor.tags['values']) {
-					const description = ((propDescriptor.tags['values'][0] as any) as ParamTag).description
-					const choices = typeof description === 'string' ? description.split(',') : undefined
-					if (choices) {
-						propDescriptor.values = choices.map((v: string) => v.trim())
-					}
-					delete propDescriptor.tags['values']
-				}
+				extractValuesFromTags(propDescriptor)
 
 				if (bt.isArrayExpression(propValuePath.node) || bt.isIdentifier(propValuePath.node)) {
 					// if it's an immediately typed property, resolve its type immediately
@@ -182,8 +178,11 @@ export function describeRequired(
 ) {
 	const requiredArray = propPropertiesPath.filter(getMemberFilter('required'))
 	const requiredNode = requiredArray.length ? requiredArray[0].get('value').node : undefined
-	propDescriptor.required =
+	const required =
 		requiredNode && bt.isBooleanLiteral(requiredNode) ? requiredNode.value : undefined
+	if (required !== undefined) {
+		propDescriptor.required = required
+	}
 }
 
 export function describeDefault(
@@ -221,4 +220,45 @@ export function describeDefault(
 			}
 		}
 	}
+}
+
+export function extractValuesFromTags(propDescriptor: PropDescriptor) {
+	if (propDescriptor.tags && propDescriptor.tags['values']) {
+		const description = ((propDescriptor.tags['values'][0] as any) as ParamTag).description
+		const choices = typeof description === 'string' ? description.split(',') : undefined
+		if (choices) {
+			propDescriptor.values = choices.map((v: string) => v.trim())
+		}
+		delete propDescriptor.tags['values']
+	}
+}
+
+/**
+ * extract the property model.prop from the component object
+ * @param path component NodePath
+ * @returns name of the model prop, null if none
+ */
+function getModelPropName(path: NodePath): string | null {
+	const modelPath = path
+		.get('properties')
+		.filter((p: NodePath) => bt.isObjectProperty(p.node) && getMemberFilter('model')(p))
+
+	if (!modelPath.length) {
+		return null
+	}
+
+	const modelPropertyNamePath =
+		modelPath.length &&
+		modelPath[0]
+			.get('value')
+			.get('properties')
+			.filter((p: NodePath) => bt.isObjectProperty(p.node) && getMemberFilter('prop')(p))
+
+	if (!modelPropertyNamePath.length) {
+		return null
+	}
+
+	const valuePath = modelPropertyNamePath[0].get('value')
+
+	return bt.isStringLiteral(valuePath.node) ? valuePath.node.value : null
 }

@@ -75,6 +75,10 @@ module.exports = (api, options) => {
 function getStyleguidist(args, api, options) {
 	const conf = api.resolve(args.config || './styleguide.config.js')
 	const sgConf = conf && conf.length ? require(conf) : {}
+
+	// reset the default component expression
+	sgConf.components = sgConf.components || 'src/components/**/[A-Z]*.vue'
+
 	const userWebpackConfig = sgConf.webpackConfig
 	options.outputDir = sgConf.styleguideDir || configSchema.styleguideDir.default
 	const cliWebpackConfig = getConfig(api)
@@ -90,6 +94,20 @@ function getStyleguidist(args, api, options) {
  */
 function getConfig(api) {
 	const conf = api.resolveChainableWebpackConfig()
+
+	// avoid annoying notification when everything works
+	if (conf.plugins.has('fork-ts-checker')) {
+		conf.plugin('fork-ts-checker').tap(args => {
+			args[0].logger = {
+				// eslint-disable-next-line no-console
+				warn: console.warn,
+				// eslint-disable-next-line no-console
+				error: console.error,
+				info: function() {}
+			}
+			return args
+		})
+	}
 
 	// because we are dealing with hot replacement in vsg
 	// remove duplicate hot module reload plugin

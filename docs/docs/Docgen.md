@@ -13,9 +13,69 @@
 
 ## API
 
-The package exposes 2 functions:
+### Type `ComponentDoc`
 
-### `parse(filePath:string, options?: DocGenOptions)`
+Every parser in docgen-api returns an instannce of `ComponentDoc` or a `ComponentDoc[]`.
+
+```ts
+interface ComponentDoc {
+  /**
+   * Usual name of the component:
+   *  It will take by order of priority
+   *  - The contents of the @displayName tag of teh component
+   *  - The name of the variable containing the comopnent (or the class if class component)
+   *  - the name of the file containing the component
+   */
+  displayName: string
+
+  /**
+   * name of the export containing the component
+   * In most cases `default`
+   * If you export es6 named components you can find those names here
+   */
+  exportName: string
+
+  /**
+   * Contents of every line that is not conatined in a tag
+   * in the code block before your component
+   * @see below
+   */
+  description?: string
+  /**
+   * Array of `PropDescriptor` objects describing all props unless ignored via the @ignore tag
+   */
+  props?: PropDescriptor[]
+  /**
+   * Array of `MethodDescriptor` objects describing all methods declared public via the @public tag
+   */
+  methods?: MethodDescriptor[]
+  /**
+   * Array of `SlotDescriptor` objects describing all slots
+   */
+  slots?: SlotDescriptor[]
+  /**
+   * Array of `EventDescriptor` objects describing all event emitted by your components
+   */
+  events?: EventDescriptor[]
+  /**
+   * All tags applied to the component
+   * @remark only component tags are stored here.
+   * Prop, method and event tags are stored with the property they describe
+   */
+  tags?: { [key: string]: BlockTag[] }
+  /**
+   * When using SFC components, one can use `<docs>` blocks.
+   * This is the content of the current docs block if it was found
+   */
+  docsBlocks?: string[]
+  /**
+   * Extra free data that user can set if they need (not used in the current standard)
+   */
+  [key: string]: any
+}
+```
+
+### `parse(filePath:string, options?: DocGenOptions):ComponentDoc`
 
 Parses the file at filePath. Returns and objects containing all documented and undocumented properties of the component.
 
@@ -36,7 +96,7 @@ import { ASTElement } from 'vue-template-compiler'
 var componentInfoConfigured = parse(filePath, {
   alias: { '@assets': path.resolve(__dirname, 'src/assets') },
   resolve: [path.resolve(__dirname, 'src')],
-  addScriptHandler: [
+  addScriptHandlers: [
     function(
       documentation: Documentation,
       componentDefinition: NodePath,
@@ -46,7 +106,7 @@ var componentInfoConfigured = parse(filePath, {
       // handle custom code in script
     }
   ],
-  addTemplateHandler: [
+  addTemplateHandlers: [
     function(
       documentation: Documentation,
       templateAst: ASTElement,
@@ -58,15 +118,43 @@ var componentInfoConfigured = parse(filePath, {
 })
 ```
 
-### `parseSource(code: string, filePath:string, options?: DocGenOptions)`
+### `parseSource(code: string, filePath:string, options?: DocGenOptions):ComponentDoc`
 
-Same as parse, but this way you can force the content of the code. The `filePath` parameter will then only be used for dependency resolution.
+Same as `parse`, but this way you can force the content of the code. The `filePath` parameter will then only be used for dependency resolution.
+
+### `parseMulti(code: string, filePath:string, options?: DocGenOptions):ComponentDoc[]`
+
+Same as `parse`, but allows for mulitple exported components in one file.
+
+**NOTE** Return type is `Array<ComponentDoc>` instead of `ComponentDoc`. Use `exportName` to differentiate the exports.
+
+### options `DocGenOptions`
+
+#### `alias`
+
+This is a mirror to the [wepbpack alias](https://webpack.js.org/configuration/resolve/#resolvealias) options. If you are using [alias in Webpack](https://webpack.js.org/configuration/resolve/#resolvealias) or paths in TypeScript, you should reflect this here..
+
+#### `resolve`
+
+`resolve` mirrors the [webpack option](https://webpack.js.org/configuration/resolve/#resolve) too. If you haev it in webpack or use baseDir in TypeScript, you should probably see how this one works.
+
+#### `addScriptHandler` and `addTemplateHandler`
+
+The custom additiona handlers allow you to add custom handlers to the parser. A handler can navigate and see custom objects that the standard parser would ignore.
+
+#### `validExtends`
+
+Function - Returns if an extended component should be parsed by docgen.
+
+**NOTE** If docgen fails to parse the targetted component, it will log a warning. It is non blocking but annoying.
+
+**NOTE** If you allow all of `node_modules` to try to be parsed, you might degrade performance. Use it responsibly.
 
 ## Documentation Object
 
-The `Documentation` class is the container of information before getting compiled. It is easily modified and accessed. To be used and exported, one can use the `toObject()` function.
+The `Documentation` class is the container of information before getting compiled. To be used and exported, use the `toObject()` function to make a neutral serializable object.
 
-The object has functions to get descriptors for props, events, methods, and slots. All those functions follow the same principle. If you call it twice with the same argument, it will return twice the same reference to the prop. this way if your prop is decorated in multiple places, it can be easily made working.
+The object has functions to get descriptors for props, events, methods, and slots. All those functions follow the same principle. If you call it twice with the same argument, it will return twice the same reference to the prop. This way if your prop is decorated in multiple places, it simplifies its documentation.
 
 ```ts
 function getPropDescriptor(propName: string): PropDescriptor

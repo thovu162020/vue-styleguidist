@@ -3,6 +3,132 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.2.3](https://github.com/vue-styleguidist/vue-styleguidist/compare/v4.2.2...v4.2.3) (2019-12-23)
+
+
+### Bug Fixes
+
+* add warning when using editorConfig ([b39f6f8](https://github.com/vue-styleguidist/vue-styleguidist/commit/b39f6f851455f208a9ae9092c8226cf2f7c3322c))
+* typings of Styleguide ([f50d3b5](https://github.com/vue-styleguidist/vue-styleguidist/commit/f50d3b5b78cbab95c76f522cc2c7ae2c3b8a91c0))
+
+
+
+
+
+## [4.2.2](https://github.com/vue-styleguidist/vue-styleguidist/compare/v4.2.1...v4.2.2) (2019-12-18)
+
+**Note:** Version bump only for package vue-styleguidist
+
+
+
+
+
+## [4.2.1](https://github.com/vue-styleguidist/vue-styleguidist/compare/v4.2.0...v4.2.1) (2019-12-11)
+
+
+### Bug Fixes
+
+* update copy-webpack-plugin to 5.1.0 ([fa2f13b](https://github.com/vue-styleguidist/vue-styleguidist/commit/fa2f13b)), closes [#675](https://github.com/vue-styleguidist/vue-styleguidist/issues/675)
+
+
+
+
+
+# [4.2.0](https://github.com/vue-styleguidist/vue-styleguidist/compare/v4.1.2...v4.2.0) (2019-12-10)
+
+
+### Features
+
+* pass validExtends to styleguide.config.js ([c22f7d5](https://github.com/vue-styleguidist/vue-styleguidist/commit/c22f7d5))
+
+
+
+
+
+## [4.1.2](https://github.com/vue-styleguidist/vue-styleguidist/compare/v4.1.1...v4.1.2) (2019-12-08)
+
+**Note:** Version bump only for package vue-styleguidist
+
+
+
+
+
+## [4.1.1](https://github.com/vue-styleguidist/vue-styleguidist/compare/v4.1.0...v4.1.1) (2019-12-05)
+
+**Note:** Version bump only for package vue-styleguidist
+
+
+
+
+
+# [4.1.0](https://github.com/vue-styleguidist/vue-styleguidist/compare/v4.0.8...v4.1.0) (2019-12-04)
+
+**Note:** Version bump only for package vue-styleguidist
+
+
+
+
+
+## [4.0.8](https://github.com/vue-styleguidist/vue-styleguidist/compare/v4.0.7...v4.0.8) (2019-12-02)
+
+
+### Bug Fixes
+
+* make sections without examples pre-compile ([56d675d](https://github.com/vue-styleguidist/vue-styleguidist/commit/56d675d))
+
+
+
+
+
+## [4.0.7](https://github.com/vue-styleguidist/vue-styleguidist/compare/v4.0.6...v4.0.7) (2019-12-01)
+
+
+### Bug Fixes
+
+* destroy Vue component in Preview when replacing it or unmounting ([00b7658](https://github.com/vue-styleguidist/vue-styleguidist/commit/00b7658))
+
+
+
+
+
+## [4.0.5](https://github.com/vue-styleguidist/vue-styleguidist/compare/v4.0.4...v4.0.5) (2019-11-20)
+
+**Note:** Version bump only for package vue-styleguidist
+
+
+
+
+
+## [4.0.4](https://github.com/vue-styleguidist/vue-styleguidist/compare/v4.0.3...v4.0.4) (2019-11-19)
+
+**Note:** Version bump only for package vue-styleguidist
+
+
+
+
+
+## [4.0.3](https://github.com/vue-styleguidist/vue-styleguidist/compare/v4.0.2...v4.0.3) (2019-11-19)
+
+
+### Bug Fixes
+
+* babel typescript snafu ([d72c43e](https://github.com/vue-styleguidist/vue-styleguidist/commit/d72c43e)), closes [#639](https://github.com/vue-styleguidist/vue-styleguidist/issues/639)
+
+
+
+
+
+## [4.0.2](https://github.com/vue-styleguidist/vue-styleguidist/compare/v4.0.1...v4.0.2) (2019-11-18)
+
+
+### Bug Fixes
+
+* import issue conflicts with babel ([f1ac618](https://github.com/vue-styleguidist/vue-styleguidist/commit/f1ac618)), closes [#635](https://github.com/vue-styleguidist/vue-styleguidist/issues/635)
+
+
+
+
+
 ## [4.0.1](https://github.com/vue-styleguidist/vue-styleguidist/compare/v4.0.0...v4.0.1) (2019-11-15)
 
 **Note:** Version bump only for package vue-styleguidist

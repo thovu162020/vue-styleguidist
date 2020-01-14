@@ -377,7 +377,8 @@ https://vue-styleguidist.github.io/Configuration.html#editorconfig `,
 		default: ''
 	},
 	styles: {
-		type: 'object',
+		type: ['object', 'existing file path', 'function'],
+		tstype: 'Styles | string | ((theme: any) => Styles)',
 		default: {},
 		example: {
 			Logo: {
@@ -403,7 +404,8 @@ https://vue-styleguidist.github.io/Configuration.html#editorconfig `,
 		}
 	},
 	theme: {
-		type: 'object',
+		type: ['object', 'existing file path'],
+		tstype: '{ [name: string]: any } | string',
 		default: {},
 		example: {
 			link: 'firebrick',
@@ -455,6 +457,15 @@ https://vue-styleguidist.github.io/Configuration.html#editorconfig `,
 			return config.showUsage === undefined ? value : config.showUsage ? 'expand' : 'collapse'
 		},
 		default: 'collapse'
+	},
+	tocMode: {
+		tstype: 'EXPAND_MODE',
+		message: 'Table Of Contents Collapsed mode',
+		description:
+			'If set to collapse, the sidebar sections are collapsed by default. Handy when dealing with big Components bases',
+		list: MODES,
+		type: 'string',
+		default: 'expand'
 	},
 	validExtends: {
 		message: 'Should the passed filepath be parsed by docgen if mentionned extends',

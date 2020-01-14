@@ -4,6 +4,6 @@
 		"lib": ["dom", "esnext"],
 		"baseUrl": "./src"
 	},
-	"include": ["src", "../vue-docgen-i18n/src/utils.d copy.ts"],
+	"include": ["src"],
 	"exclude": ["node_modules"]
 }

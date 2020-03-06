@@ -9,7 +9,7 @@ jest.mock('../../Documentation')
 
 function parse(src: string, plugins?: ParserPlugin[]): NodePath | undefined {
 	const ast = babylon({ plugins }).parse(src)
-	return resolveExportedComponent(ast).get('default')
+	return resolveExportedComponent(ast)[0].get('default')
 }
 
 describe('propHandler', () => {
@@ -23,7 +23,7 @@ describe('propHandler', () => {
 			name: ''
 		}
 		const MockDocumentation = require('../../Documentation').default
-		documentation = new MockDocumentation()
+		documentation = new MockDocumentation('test/path')
 		const mockGetPropDescriptor = documentation.getPropDescriptor as jest.Mock
 		mockGetPropDescriptor.mockReturnValue(mockPropDescriptor)
 	})

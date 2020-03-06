@@ -85,6 +85,7 @@ export interface SlotDescriptor extends Descriptor {
 	description?: string
 	bindings?: ParamTag[]
 	scoped?: boolean
+	tags?: { [key: string]: BlockTag[] }
 }
 
 export interface ComponentDoc {
@@ -108,8 +109,10 @@ export default class Documentation {
 	private dataMap: Map<string, any>
 	private docsBlocks: string[] | undefined
 	private originExtendsMixin: Descriptor
+	public readonly componentFullfilePath: string
 
-	constructor() {
+	constructor(fullFilePath: string) {
+		this.componentFullfilePath = fullFilePath
 		this.propsMap = new Map()
 		this.methodsMap = new Map()
 		this.slotsMap = new Map()

@@ -1,10 +1,13 @@
 /* eslint-disable no-console */
-
-/**
- * @mixin
- */
-export default {
+export const myProps = {
 	props: {
+		/**
+		 * This prop comes from the loginMixin mixin
+		 */
+		inMixin: {
+			type: Boolean,
+			default: true
+		},
 		/**
 		 * @ignore
 		 */
@@ -12,7 +15,10 @@ export default {
 			type: String,
 			default: '#333'
 		}
-	},
+	}
+}
+
+export const logger = {
 	mounted() {
 		this.hello()
 	},

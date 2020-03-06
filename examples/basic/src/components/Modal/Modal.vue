@@ -1,29 +1,38 @@
 <template>
-<transition name="Modal" v-if="showModal">
-	<div class="modal-mask">
-		<div class="modal-wrapper">
-			<div class="modal-container">
-				<div class="modal-head">
-					<!-- @slot Use this slot header -->
-					<slot name="head"></slot>
-				</div>
-				<div class="modal-body">
-					<!-- @slot Use this slot body -->
-					<slot name="body"></slot>
-				</div>
-			</div>
-		</div>
-	</div>
-</transition>
+  <transition
+    v-if="showModal"
+    name="Modal"
+  >
+    <div class="modal-mask">
+      <div class="modal-wrapper">
+        <div class="modal-container">
+          <ModalHeader
+            class="modal-head"
+            @close="$emit('close')"
+          >
+            <!-- @slot Use this slot header -->
+            <slot name="head" />
+          </ModalHeader>
+          <div class="modal-body">
+            <!-- @slot Use this slot body -->
+            <slot name="body" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </transition>
 </template>
 
 <script>
+import ModalHeader from './ModalHeader.vue'
+
 /**
  * Modal example [modal-component](https://vuejs.org/v2/examples/modal.html).
  * @author [Vue](https://vuejs.org/v2/examples/modal.html)
  */
 export default {
 	name: 'Modal',
+	components: { ModalHeader },
 	props: {
 		/**
 		 * Show modal

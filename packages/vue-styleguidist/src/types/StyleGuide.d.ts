@@ -46,6 +46,11 @@ export interface StyleguidistConfig {
 	 * @default false
 	 */
 	defaultExample: string
+	/**
+	 * In the generated docs, this adda a column to the props table giving in which file it is defined. Useful when extending comopnents or mixing mixins
+	 * @default false
+	 */
+	displayOrigins: boolean
 	editorConfig: {
 		theme: string
 	}
@@ -65,6 +70,11 @@ export interface StyleguidistConfig {
 	 * What components to ignore. Can be an Array or String. Comma separated.
 	 */
 	ignore: string[]
+	/**
+	 * By default, the PrismJs editor is themed in the theme files. If you want to use a theme defined in CSS, set this to false and require the CSS file in the `require` config.
+	 * @default true
+	 */
+	jssThemedEditor: boolean
 	/**
 	 * Do documented components contain JSX syntax? Set this to `false` to restore compatibility with this TypeScript cast syntax: `<any>variable` instead of `variable as any`.
 	 * @default true

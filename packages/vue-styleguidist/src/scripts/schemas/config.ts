@@ -14,7 +14,7 @@ import { StyleguidistConfig } from '../../types/StyleGuide'
 import findUserWebpackConfig from '../utils/findUserWebpackConfig'
 import consts from '../consts'
 
-const logger = loggerMaker('vsg')
+const logger = loggerMaker('rsg')
 
 const DEFAULT_COMPONENTS_PATTERN = `src/{components,Components}/**/*.vue`
 
@@ -97,6 +97,13 @@ export default {
 		process: (val: string | boolean) =>
 			val === true ? path.resolve(__dirname, '../../../templates/DefaultExample.md') : val
 	},
+	displayOrigins: {
+		type: 'boolean',
+		message: 'Show the origins of each prop',
+		description:
+			'In the generated docs, this adda a column to the props table giving in which file it is defined. Useful when extending comopnents or mixing mixins',
+		default: false
+	},
 	editorConfig: {
 		tstype: ['{', '		theme: string', '	}'].join('\n'),
 		type: 'object',
@@ -165,7 +172,7 @@ https://vue-styleguidist.github.io/Configuration.html#editorconfig `,
 
 			return false
 		},
-		example: (componentPath: string) => componentPath.replace(/\.jsx?$/, '.examples.md')
+		example: (componentPath: string) => componentPath.replace(/\.(jsx|vue)?$/, '.examples.md')
 	},
 	highlightTheme: {
 		type: 'string',
@@ -178,6 +185,13 @@ https://vue-styleguidist.github.io/Configuration.html#editorconfig `,
 		description: 'What components to ignore. Can be an Array or String. Comma separated.',
 		type: 'array',
 		default: ['**/__tests__/**', `**/*.test.vue`, `**/*.spec.vue`, '**/*.d.ts']
+	},
+	jssThemedEditor: {
+		message: 'Should PrismJs editors be themed using JSS',
+		description:
+			'By default, the PrismJs editor is themed in the theme files. If you want to use a theme defined in CSS, set this to false and require the CSS file in the `require` config.',
+		type: 'boolean',
+		default: true
 	},
 	jsxInComponents: {
 		message: 'JSX in Components',
@@ -254,7 +268,9 @@ https://vue-styleguidist.github.io/Configuration.html#editorconfig `,
 	progressBar: {
 		message: 'Display a progress bar while building',
 		type: 'boolean',
-		default: true
+		default: true,
+		process: (value: boolean | undefined, config: StyleguidistConfig): boolean =>
+			value === undefined && !config.verbose ? true : !!value
 	},
 	propsParser: {
 		tstype: '(file: string) => Promise<ComponentDoc>',

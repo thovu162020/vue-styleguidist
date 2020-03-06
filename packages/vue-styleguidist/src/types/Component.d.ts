@@ -20,8 +20,9 @@ export interface ComponentProps {
 	}
 	docsBlocks?: string[]
 	visibleName?: string
+	examplesFile?: string
 	examples?: { require: string; toAST: () => b.Node } | Example[] | null
-	example?: Example[]
+	example?: Example[][]
 }
 
 export interface Component {

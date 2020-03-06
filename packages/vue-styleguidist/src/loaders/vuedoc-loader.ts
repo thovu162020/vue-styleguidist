@@ -2,15 +2,18 @@ import * as path from 'path'
 import { generate } from 'escodegen'
 import toAst from 'to-ast'
 import createLogger from 'glogg'
-import { parse, Tag, ComponentDoc } from 'vue-docgen-api'
+import { parse, ComponentDoc, Tag } from 'vue-docgen-api'
 import defaultSortProps from 'react-styleguidist/lib/loaders/utils/sortProps'
 import requireIt from 'react-styleguidist/lib/loaders/utils/requireIt'
 import { ComponentProps } from '../types/Component'
 import { StyleguidistContext } from '../types/StyleGuide'
 import getExamples from './utils/getExamples'
 import getComponentVueDoc from './utils/getComponentVueDoc'
+import findOrigins from './utils/findOrigins'
+import stripOutOrigins from './utils/stripOutOrigins'
+import consts from '../scripts/consts'
 
-const logger = createLogger('vsg')
+const logger = createLogger('rsg')
 const examplesLoader = path.resolve(__dirname, './examples-loader.js')
 
 export default function(this: StyleguidistContext, source: string) {
@@ -70,6 +73,19 @@ export async function vuedocLoader(
 		logger.warn(`Error parsing ${componentPath}: ${e}`)
 	}
 
+	// set dependency tree for mixins an extends
+	const originFiles = findOrigins(docs)
+	const basedir = path.dirname(file)
+	originFiles.forEach(extensionFile => {
+		this.addDependency(path.join(basedir, extensionFile))
+	})
+
+	// strip out origins if config is set to false to
+	// keep origins from displaying
+	if (!config.displayOrigins) {
+		stripOutOrigins(docs)
+	}
+
 	let vsgDocs: ComponentProps = {
 		...docs,
 		events: makeObject(docs.events),
@@ -77,23 +93,23 @@ export async function vuedocLoader(
 	}
 	const componentVueDoc = getComponentVueDoc(source, file)
 	const isComponentDocInVueFile = !!componentVueDoc
+	let ignoreExamplesInFile = false
 	if (componentVueDoc) {
 		vsgDocs.example = requireIt(`!!${examplesLoader}?customLangs=vue|js|jsx!${file}`)
 	} else if (docs.tags) {
 		const examples = docs.tags.examples
 		if (examples) {
-			const examplePath = (examples[examples.length - 1] as Tag).content
-			if (examples.length > 1) {
-				logger.warn(
-					`More than one @example tags specified in component ${path.relative(
-						process.cwd(),
-						file
-					)}\nUsing the last tag to build examples: '${examplePath}'`
+			const examplePaths = examples.map((a: Tag) => a.content)
+			if (examplePaths[0] === '[none]') {
+				ignoreExamplesInFile = true
+			} else {
+				vsgDocs.example = examplePaths.map(p =>
+					requireIt(`!!${examplesLoader}?customLangs=vue|js|jsx!${p}`)
 				)
 			}
-			vsgDocs.example = requireIt(`!!${examplesLoader}?customLangs=vue|js|jsx!${examplePath}`)
 		}
 	}
+
 	if (docs.props) {
 		const filteredProps = docs.props.filter(prop => !prop.tags || !prop.tags.ignore)
 		const sortProps = config.sortProps || defaultSortProps
@@ -101,13 +117,37 @@ export async function vuedocLoader(
 	}
 
 	const examplesFile = config.getExampleFilename ? config.getExampleFilename(file) : false
-	vsgDocs.examples = getExamples(
-		file,
-		examplesFile,
-		docs.displayName,
-		config.defaultExample,
-		isComponentDocInVueFile
-	)
+	if (!ignoreExamplesInFile) {
+		if (process.env.NODE_ENV !== 'production' && examplesFile && global) {
+			global.VUE_STYLEGUIDIST = global.VUE_STYLEGUIDIST || {}
+			if (global.VUE_STYLEGUIDIST[examplesFile]) {
+				const relativeFile = path.relative(process.cwd(), file)
+				if (global.VUE_STYLEGUIDIST[examplesFile] !== relativeFile) {
+					logger.warn(
+						'\n\n' +
+							`${path.relative(process.cwd(), examplesFile)}\n` +
+							`this file is used by multiple components.\n` +
+							` - ${global.VUE_STYLEGUIDIST[examplesFile]}\n` +
+							` - ${relativeFile}\n` +
+							'It will be displayed more than once in the styleguide\n' +
+							'Check out this cookbook receipe to solve the issue\n' +
+							`${
+								consts.DOCS_COOKBOOK
+							}#i-have-multiple-components-in-the-same-folder-what-can-i-do\n`
+					)
+				}
+			} else {
+				global.VUE_STYLEGUIDIST[examplesFile] = path.relative(process.cwd(), file)
+			}
+		}
+		vsgDocs.examples = getExamples(
+			file,
+			examplesFile,
+			docs.displayName,
+			config.defaultExample,
+			isComponentDocInVueFile
+		)
+	}
 
 	if (config.updateDocs) {
 		vsgDocs = config.updateDocs(vsgDocs, file)

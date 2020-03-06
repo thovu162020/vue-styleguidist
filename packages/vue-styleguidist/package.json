@@ -1,7 +1,7 @@
 {
 	"name": "vue-styleguidist",
 	"description": "Vue components style guide generator",
-	"version": "4.4.3",
+	"version": "4.13.1",
 	"homepage": "https://vue-styleguidist.github.io",
 	"scripts": {
 		"compile": "yarn typings && babel --delete-dir-on-start src/ --ignore **/__tests__,**/*.spec.* -d lib/ --extensions .js,.ts,.tsx,.jsx",
@@ -30,7 +30,7 @@
 	},
 	"dependencies": {
 		"@vxna/mini-html-webpack-template": "^1.0.0",
-		"ast-types": "^0.12.2",
+		"ast-types": "^0.13.2",
 		"classnames": "^2.2.6",
 		"clean-webpack-plugin": "^3.0.0",
 		"cli-progress": "^3.0.0",
@@ -69,26 +69,27 @@
 		"react-group": "^1.0.6",
 		"react-icons": "^3.7.0",
 		"react-lifecycles-compat": "^3.0.4",
-		"react-simple-code-editor": "^0.9.4",
-		"react-styleguidist": "^10.5.0",
+		"react-simple-code-editor": "^0.11.0",
+		"react-styleguidist": "^10.6.2",
 		"rewrite-imports": "^2.0.3",
 		"style-loader": "^1.0.0",
 		"terser-webpack-plugin": "^2.2.2",
 		"to-ast": "^1.0.0",
-		"vue-docgen-api": "^4.4.3",
+		"vue-docgen-api": "^4.13.1",
 		"vue-inbrowser-compiler": "^4.2.2",
 		"vue-inbrowser-compiler-utils": "^4.0.1",
-		"webpack-dev-server": "^3.7.1",
+		"webpack-dev-server": "^3.10.3",
 		"webpack-merge": "^4.0.0"
 	},
 	"peerDependencies": {
 		"vue": ">=2.0.0",
 		"vue-loader": ">=14.0.0",
 		"vue-template-compiler": ">=2.0.0",
-		"webpack": ">=4 < 4.29"
+		"webpack": ">=4"
 	},
 	"devDependencies": {
 		"@babel/types": "^7.5.5",
+		"@testing-library/react": "^9.4.0",
 		"@types/buble": "^0.19.2",
 		"@types/cli-progress": "^1.8.1",
 		"@types/copy-webpack-plugin": "^4.4.1",
@@ -106,6 +107,6 @@
 		"ejs": "^2.7.4",
 		"source-map": "0.6.1",
 		"strip-shebang": "^1.0.2",
-		"webpack": "^4.28.2"
+		"webpack": "^4.41.5"
 	}
 }

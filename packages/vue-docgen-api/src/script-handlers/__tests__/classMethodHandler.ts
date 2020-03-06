@@ -9,7 +9,7 @@ jest.mock('../../Documentation')
 
 function parseTS(src: string): Map<string, NodePath> {
 	const ast = babylon({ plugins: ['typescript'] }).parse(src)
-	return resolveExportedComponent(ast)
+	return resolveExportedComponent(ast)[0]
 }
 
 describe('classPropHandler', () => {
@@ -19,7 +19,7 @@ describe('classPropHandler', () => {
 	beforeEach(() => {
 		mockMethodDescriptor = { name: '', description: '', modifiers: [] }
 		const MockDocumentation = Documentation
-		documentation = new MockDocumentation()
+		documentation = new MockDocumentation('test/path')
 		const mockGetMethodDescriptor = documentation.getMethodDescriptor as jest.Mock
 		mockGetMethodDescriptor.mockImplementation((name: string) => {
 			mockMethodDescriptor.name = name

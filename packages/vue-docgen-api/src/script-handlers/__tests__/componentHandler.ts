@@ -10,14 +10,14 @@ jest.mock('../../Documentation')
 
 function parse(src: string, plugins: ParserPlugin[] = []): Map<string, NodePath> {
 	const ast = babylon({ plugins }).parse(src)
-	return resolveExportedComponent(ast)
+	return resolveExportedComponent(ast)[0]
 }
 
 describe('componentHandler', () => {
 	let documentation: Documentation
 
 	beforeEach(() => {
-		documentation = new Documentation()
+		documentation = new Documentation('dummy/path')
 	})
 
 	it('should return the right component name', () => {

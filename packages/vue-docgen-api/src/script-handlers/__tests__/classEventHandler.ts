@@ -9,7 +9,7 @@ jest.mock('../../Documentation')
 
 function parse(src: string): { component: NodePath | undefined; ast: bt.File } {
 	const ast = babylon({ plugins: ['typescript'] }).parse(src)
-	return { component: resolveExportedComponent(ast).get('default'), ast }
+	return { component: resolveExportedComponent(ast)[0].get('default'), ast }
 }
 
 describe('classEventHandler', () => {
@@ -18,7 +18,7 @@ describe('classEventHandler', () => {
 
 	beforeEach(() => {
 		mockEventDescriptor = { name: 'success' }
-		documentation = new Documentation()
+		documentation = new Documentation('dummy/path')
 		const mockGetEventDescriptor = documentation.getEventDescriptor as jest.Mock
 		mockGetEventDescriptor.mockReturnValue(mockEventDescriptor)
 	})

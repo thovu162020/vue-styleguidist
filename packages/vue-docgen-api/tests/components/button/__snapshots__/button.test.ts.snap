@@ -50,110 +50,6 @@ Object {
     Object {
       "defaultValue": Object {
         "func": false,
-        "value": "'blue'",
-      },
-      "description": "Example prop",
-      "mixin": Object {
-        "name": "index",
-        "path": "~/packages/vue-docgen-api/tests/mixins/another/index.js",
-      },
-      "name": "propsAnother",
-      "type": Object {
-        "name": "string",
-      },
-    },
-    Object {
-      "description": "Another mixin",
-      "mixin": Object {
-        "name": "genericMixin",
-        "path": "~/packages/vue-docgen-api/tests/components/button/genericMixin.js",
-      },
-      "name": "secret",
-      "type": Object {
-        "name": "string",
-      },
-    },
-    Object {
-      "defaultValue": Object {
-        "func": false,
-        "value": "'#333'",
-      },
-      "description": "The color for the button example",
-      "mixin": Object {
-        "name": "colorMixin",
-        "path": "~/packages/vue-docgen-api/tests/components/button/colorMixin.js",
-      },
-      "name": "color",
-      "type": Object {
-        "name": "string",
-      },
-    },
-    Object {
-      "defaultValue": Object {
-        "func": false,
-        "value": "'normal'",
-      },
-      "description": "The size of the button",
-      "mixin": Object {
-        "name": "colorMixin",
-        "path": "~/packages/vue-docgen-api/tests/components/button/colorMixin.js",
-      },
-      "name": "size",
-      "tags": Object {},
-      "type": Object {
-        "name": "string",
-      },
-      "values": Array [
-        "small",
-        "medium",
-        "large",
-      ],
-    },
-    Object {
-      "mixin": Object {
-        "name": "multiMixin",
-        "path": "~/packages/vue-docgen-api/tests/mixins/multiMixin.js",
-      },
-      "name": "shouldBe",
-      "type": Object {
-        "name": "string",
-      },
-    },
-    Object {
-      "description": "Number of columns (1-12) the column should span.",
-      "name": "span",
-      "type": Object {
-        "name": "string|number",
-      },
-    },
-    Object {
-      "description": "Sm breakpoint and above",
-      "name": "spanSm",
-      "type": Object {
-        "name": "string|number",
-      },
-    },
-    Object {
-      "description": "Md breakpoint and above",
-      "name": "spanMd",
-      "type": Object {
-        "name": "string|number",
-      },
-    },
-    Object {
-      "defaultValue": Object {
-        "func": false,
-        "value": "false",
-      },
-      "description": "The example props",
-      "name": "example",
-      "type": Object {
-        "name": "boolean",
-      },
-    },
-    Object {
-      "defaultValue": Object {
-        "func": false,
         "value": "'example model'",
       },
       "description": "Model example2",
@@ -171,46 +67,81 @@ Object {
       },
     },
     Object {
+      "description": "Sm breakpoint and above",
+      "name": "spanSm",
+      "type": Object {
+        "name": "string|number",
+      },
+    },
+    Object {
+      "description": "Md breakpoint and above",
+      "name": "spanMd",
+      "type": Object {
+        "name": "string|number",
+      },
+    },
+    Object {
+      "description": "Number of columns (1-12) the column should span.",
+      "name": "span",
+      "type": Object {
+        "name": "string|number",
+      },
+    },
+    Object {
       "defaultValue": Object {
         "func": false,
-        "value": "16",
+        "value": "'normal'",
       },
-      "description": "The example3 props",
-      "name": "example3",
+      "description": "The size of the button",
+      "mixin": Object {
+        "name": "colorMixin",
+        "path": "colorMixin.js",
+      },
+      "name": "size",
+      "tags": Object {},
       "type": Object {
-        "name": "number",
+        "name": "string",
+      },
+      "values": Array [
+        "small",
+        "medium",
+        "large",
+      ],
+    },
+    Object {
+      "mixin": Object {
+        "name": "multiMixin",
+        "path": "../../mixins/multiMixin.js",
+      },
+      "name": "shouldBe",
+      "type": Object {
+        "name": "string",
+      },
+    },
+    Object {
+      "description": "Another mixin",
+      "mixin": Object {
+        "name": "genericMixin",
+        "path": "genericMixin.js",
+      },
+      "name": "secret",
+      "type": Object {
+        "name": "string",
       },
     },
     Object {
       "defaultValue": Object {
-        "func": true,
-        "value": "() => () => null",
+        "func": false,
+        "value": "'blue'",
       },
-      "description": "Add custom click actions.",
-      "name": "onCustomClick",
-      "tags": Object {
-        "ignore": Array [
-          Object {
-            "description": true,
-            "title": "ignore",
-          },
-        ],
+      "description": "Example prop",
+      "mixin": Object {
+        "name": "index",
+        "path": "../../mixins/another/index.js",
       },
+      "name": "propsAnother",
       "type": Object {
-        "name": "func",
-      },
-    },
-    Object {
-      "defaultValue": Object {
-        "func": true,
-        "value": "() => {
-    return 'foo'
-}",
-      },
-      "description": "Function default",
-      "name": "funcDefault",
-      "type": Object {
-        "name": "func",
+        "name": "string",
       },
     },
     Object {
@@ -237,6 +168,97 @@ a factory function",
           },
         ],
       },
+      "type": Object {
+        "name": "string",
+      },
+    },
+    Object {
+      "description": "Prop from first mixin",
+      "mixin": Object {
+        "name": "namedMixin",
+        "path": "namedMixin.js",
+      },
+      "name": "p1",
+      "type": Object {
+        "name": "string",
+      },
+    },
+    Object {
+      "defaultValue": Object {
+        "func": true,
+        "value": "() => () => null",
+      },
+      "description": "Add custom click actions.",
+      "name": "onCustomClick",
+      "tags": Object {
+        "ignore": Array [
+          Object {
+            "description": true,
+            "title": "ignore",
+          },
+        ],
+      },
+      "type": Object {
+        "name": "func",
+      },
+    },
+    Object {
+      "description": "Prop from second mixin",
+      "mixin": Object {
+        "name": "namedMixin",
+        "path": "namedMixin.js",
+      },
+      "name": "hello2",
+      "type": Object {
+        "name": "string",
+      },
+    },
+    Object {
+      "defaultValue": Object {
+        "func": true,
+        "value": "() => {
+    return 'foo'
+}",
+      },
+      "description": "Function default",
+      "name": "funcDefault",
+      "type": Object {
+        "name": "func",
+      },
+    },
+    Object {
+      "defaultValue": Object {
+        "func": false,
+        "value": "16",
+      },
+      "description": "The example3 props",
+      "name": "example3",
+      "type": Object {
+        "name": "number",
+      },
+    },
+    Object {
+      "defaultValue": Object {
+        "func": false,
+        "value": "false",
+      },
+      "description": "The example props",
+      "name": "example",
+      "type": Object {
+        "name": "boolean",
+      },
+    },
+    Object {
+      "defaultValue": Object {
+        "func": false,
+        "value": "'#333'",
+      },
+      "description": "The color for the button example",
+      "mixin": Object {
+        "name": "colorMixin",
+        "path": "colorMixin.js",
+      },
+      "name": "color",
       "type": Object {
         "name": "string",
       },

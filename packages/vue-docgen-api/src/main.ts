@@ -27,6 +27,8 @@ export {
 	Tag,
 	ParamTag
 }
+export { default as getDefaultExample } from './utils/getDefaultExample'
+export { default as cleanName } from './utils/cleanName'
 
 /**
  * Parse the component at filePath and return props, public methods, events and slots
@@ -79,7 +81,7 @@ function isOptionsObject(opts: any): opts is DocGenOptions {
 }
 
 async function parsePrimitive(
-	createDoc: (opts: ParseOptions) => Promise<Documentation[]>,
+	createDocs: (opts: ParseOptions) => Promise<Documentation[]>,
 	filePath: string,
 	opts?: DocGenOptions | { [alias: string]: string }
 ): Promise<ComponentDoc[]> {
@@ -94,6 +96,6 @@ async function parsePrimitive(
 				alias: opts,
 				validExtends: (fullFilePath: string) => !/[\\/]node_modules[\\/]/.test(fullFilePath)
 		  }
-	const docs = await createDoc(options)
+	const docs = await createDocs(options)
 	return docs.map(d => d.toObject())
 }

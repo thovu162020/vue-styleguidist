@@ -6,28 +6,20 @@ import flatten from 'lodash/flatten'
 import loaderUtils from 'loader-utils'
 import { generate } from 'escodegen'
 import toAst from 'to-ast'
-import astTypes from 'ast-types'
+import { builders as b } from 'ast-types'
+import { parse } from 'vue-docgen-api'
 import { compile } from 'vue-inbrowser-compiler'
 import chunkify from 'react-styleguidist/lib/loaders/utils/chunkify'
-import expandDefaultComponent from 'react-styleguidist/lib/loaders/utils/expandDefaultComponent'
 import getImports from 'react-styleguidist/lib/loaders/utils/getImports'
 import requireIt from 'react-styleguidist/lib/loaders/utils/requireIt'
+import resolveESModule from 'react-styleguidist/lib/loaders/utils/resolveESModule'
 import { StyleguidistContext } from '../types/StyleGuide'
 import { ExampleLoader } from '../types/Example'
+import expandDefaultComponent from './utils/expandDefaultComponent'
 import getComponentVueDoc from './utils/getComponentVueDoc'
-import cleanComponentName from './utils/cleanComponentName'
 import importCodeExampleFile from './utils/importCodeExampleFile'
+import absolutize from './utils/absolutize'
 import getScript from './utils/getScript'
-
-const b = astTypes.builders
-
-// Hack the react scaffolding to be able to load client
-const absolutize = (filepath: string) =>
-	path.resolve(
-		path.dirname(require.resolve('vue-styleguidist')),
-		'../loaders/utils/client',
-		filepath
-	)
 
 const REQUIRE_IN_RUNTIME_PATH = absolutize('requireInRuntime')
 const EVAL_IN_CONTEXT_PATH = absolutize('evalInContext')
@@ -59,10 +51,12 @@ export async function examplesLoader(this: StyleguidistContext, src: string): Pr
 	const options = loaderUtils.getOptions(this) || {}
 	const { file, displayName, shouldShowDefaultExample, customLangs } = options
 
-	const cleanDisplayName = displayName ? cleanComponentName(displayName) : undefined
 	// Replace placeholders (__COMPONENT__) with the passed-in component name
 	if (shouldShowDefaultExample && source) {
-		source = expandDefaultComponent(source, cleanDisplayName)
+		const fullFilePath = path.join(path.dirname(filePath), file)
+		const docs = await parse(fullFilePath)
+		this.addDependency(fullFilePath)
+		source = expandDefaultComponent(source, docs)
 	}
 
 	const updateExample = (props: ExampleLoader) => {
@@ -132,31 +126,8 @@ export async function examplesLoader(this: StyleguidistContext, src: string): Pr
 	)
 
 	// Require context modules so they are available in an example
-	let marker = -1
-	const requireContextCode = b.program(
-		flatten(
-			map(fullContext, (requireRequest, name: string) => [
-				// const name$0 = require(path);
-				b.variableDeclaration('const', [
-					b.variableDeclarator(
-						b.identifier(`${name}$${++marker}`),
-						requireIt(requireRequest).toAST()
-					)
-				]),
-				// const name = name$0.default || name$0;
-				b.variableDeclaration('const', [
-					b.variableDeclarator(
-						b.identifier(name),
-						b.logicalExpression(
-							'||',
-							b.identifier(`${name}$${marker}.default`),
-							b.identifier(`${name}$${marker}`)
-						)
-					)
-				])
-			])
-		)
-	)
+
+	const requireContextCode = b.program(flatten(map(fullContext, resolveESModule)))
 
 	// Stringify examples object except the evalInContext function
 	const examplesWithEval = examples.map(example => {

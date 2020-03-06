@@ -6,7 +6,7 @@ import propHandler from '../propHandler'
 describe('slotHandler', () => {
 	let doc: Documentation
 	beforeEach(() => {
-		doc = new Documentation()
+		doc = new Documentation('dummy/path')
 	})
 
 	it('should match props in attributes expressions', done => {
@@ -14,15 +14,18 @@ describe('slotHandler', () => {
 			[
 				'<div>',
 				'  <h1>titleof the template</h1>',
-				'  <!-- @prop {number} size width of the button -->',
-				'  <!-- @prop {string} value value in the form -->',
+				'  <!--',
+				'    @prop {number} size width of the button',
+				'    @prop {string} value value in the form',
+				'   -->',
+				'  <!-- separative comment -->',
 				'  <button :style="`width:${props.size}`" :value="props.value"></button>',
 				'</div>'
 			].join('\n'),
 			{ comments: true }
 		).ast
 		if (ast) {
-			traverse(ast, doc, [propHandler], { functional: true, rootLeadingComment: '' })
+			traverse(ast, doc, [propHandler], { functional: true, rootLeadingComment: [] })
 			expect(doc.toObject().props).toMatchObject([
 				{ name: 'size', type: { name: 'number' }, description: 'width of the button' },
 				{ name: 'value', type: { name: 'string' }, description: 'value in the form' }
@@ -48,7 +51,7 @@ describe('slotHandler', () => {
 			{ comments: true }
 		).ast
 		if (ast) {
-			traverse(ast, doc, [propHandler], { functional: true, rootLeadingComment: '' })
+			traverse(ast, doc, [propHandler], { functional: true, rootLeadingComment: [] })
 			expect(doc.toObject().props).toMatchObject([
 				{ name: 'name', type: { name: 'mixed' }, description: 'Your Name' },
 				{ name: 'adress', type: { name: 'string' }, description: 'Your Adress' }
@@ -70,7 +73,7 @@ describe('slotHandler', () => {
 			{ comments: true }
 		).ast
 		if (ast) {
-			traverse(ast, doc, [propHandler], { functional: true, rootLeadingComment: '' })
+			traverse(ast, doc, [propHandler], { functional: true, rootLeadingComment: [] })
 			expect(doc.toObject().props).toBeUndefined()
 			done()
 		} else {
@@ -89,7 +92,7 @@ describe('slotHandler', () => {
 			{ comments: true }
 		).ast
 		if (ast) {
-			traverse(ast, doc, [propHandler], { functional: true, rootLeadingComment: '' })
+			traverse(ast, doc, [propHandler], { functional: true, rootLeadingComment: [] })
 			expect(doc.toObject().props).toBeUndefined()
 			done()
 		} else {
@@ -111,7 +114,7 @@ describe('slotHandler', () => {
 			{ comments: true }
 		).ast
 		if (ast) {
-			traverse(ast, doc, [propHandler], { functional: true, rootLeadingComment: '' })
+			traverse(ast, doc, [propHandler], { functional: true, rootLeadingComment: [] })
 			expect(doc.toObject().props).toMatchObject([{ name: 'error', type: {} }])
 			done()
 		} else {

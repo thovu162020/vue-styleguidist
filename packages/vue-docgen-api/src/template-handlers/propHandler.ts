@@ -1,15 +1,12 @@
 import * as bt from '@babel/types'
 import recast from 'recast'
 import { ASTElement, ASTExpression, ASTNode } from 'vue-template-compiler'
-import buildParser from '../babel-parser'
 import Documentation, { ParamTag } from '../Documentation'
 import { TemplateParserOptions } from '../parse-template'
 import extractLeadingComment from '../utils/extractLeadingComment'
 import getDoclets from '../utils/getDoclets'
+import getTemplateExpressionAST from '../utils/getTemplateExpressionAST'
 
-const parser = buildParser({ plugins: ['typescript'] })
-
-const allowRE = /^(v-bind|:)/
 export default function propTemplateHandler(
 	documentation: Documentation,
 	templateAst: ASTElement,
@@ -21,6 +18,7 @@ export default function propTemplateHandler(
 	}
 }
 
+const allowRE = /^(v-bind|:|v-on|@)/
 function propsInAttributes(
 	templateAst: ASTElement,
 	documentation: Documentation,
@@ -32,7 +30,9 @@ function propsInAttributes(
 		// only look at expressions
 		if (allowRE.test(key)) {
 			const expression = bindings[key]
-			getPropsFromExpression(templateAst.parent, templateAst, expression, documentation, options)
+			if (expression && expression.length) {
+				getPropsFromExpression(templateAst.parent, templateAst, expression, documentation, options)
+			}
 		}
 	}
 }
@@ -56,8 +56,7 @@ function getPropsFromExpression(
 	documentation: Documentation,
 	options: TemplateParserOptions
 ) {
-	// this allows for weird expressions like {[t]:val} to be parsed properly
-	const ast = parser.parse(`(() => (${expression}))()`)
+	const ast = getTemplateExpressionAST(expression)
 	const propsFound: string[] = []
 	recast.visit(ast.program, {
 		visitMemberExpression(path) {
@@ -79,20 +78,22 @@ function getPropsFromExpression(
 		}
 	})
 	if (propsFound.length) {
-		const comment = extractLeadingComment(parentAst, item, options.rootLeadingComment)
-		const doclets = getDoclets(comment)
-		const propTags = doclets.tags && (doclets.tags.filter(d => d.title === 'prop') as ParamTag[])
-		if (propTags && propTags.length) {
-			propsFound.forEach(pName => {
-				const propTag = propTags.filter(pt => pt.name === pName)
-				if (propTag.length) {
-					const p = documentation.getPropDescriptor(pName)
-					p.type = propTag[0].type
-					if (typeof propTag[0].description === 'string') {
-						p.description = propTag[0].description
+		const comments = extractLeadingComment(parentAst, item, options.rootLeadingComment)
+		comments.forEach(comment => {
+			const doclets = getDoclets(comment)
+			const propTags = doclets.tags && (doclets.tags.filter(d => d.title === 'prop') as ParamTag[])
+			if (propTags && propTags.length) {
+				propsFound.forEach(pName => {
+					const propTag = propTags.filter(pt => pt.name === pName)
+					if (propTag.length) {
+						const p = documentation.getPropDescriptor(pName)
+						p.type = propTag[0].type
+						if (typeof propTag[0].description === 'string') {
+							p.description = propTag[0].description
+						}
 					}
-				}
-			})
-		}
+				})
+			}
+		})
 	}
 }

@@ -13,16 +13,17 @@
 <script>
 import VueTypes from 'vue-types'
 import PropTypes from '@znck/prop-types'
-import loggerMixin from '../../mixins/loggerMixin'
+import { logger, myProps } from '../../mixins/loggerMixin'
 
 /**
  * The only true button.
  * @example ../../../docs/Button.md
+ * @example ../../../docs/ButtonConclusion.md
  * @displayName Best Button
  */
 export default {
 	name: 'Button',
-	mixins: [loggerMixin],
+	mixins: [logger, myProps],
 	props: {
 		/**
 		 * A test for default function Object
@@ -44,7 +45,7 @@ export default {
 		propComplexDefault: {
 			type: Array,
 			default: () => {
-				if (typeof loggerMixin.mounted === 'function') {
+				if (typeof logger.mounted === 'function') {
 					return []
 				} else {
 					return undefined

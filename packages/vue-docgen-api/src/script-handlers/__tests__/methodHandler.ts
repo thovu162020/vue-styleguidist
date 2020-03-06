@@ -8,12 +8,12 @@ jest.mock('../../Documentation')
 
 function parse(src: string): NodePath | undefined {
 	const ast = babylon({ plugins: ['flow'] }).parse(src)
-	return resolveExportedComponent(ast).get('default')
+	return resolveExportedComponent(ast)[0].get('default')
 }
 
 function parseTS(src: string): NodePath | undefined {
 	const ast = babylon({ plugins: ['typescript'] }).parse(src)
-	return resolveExportedComponent(ast).get('default')
+	return resolveExportedComponent(ast)[0].get('default')
 }
 
 describe('methodHandler', () => {
@@ -23,7 +23,7 @@ describe('methodHandler', () => {
 	beforeEach(() => {
 		mockMethodDescriptor = { name: '', description: '', modifiers: [] }
 		const MockDocumentation = Documentation
-		documentation = new MockDocumentation()
+		documentation = new MockDocumentation('test/path')
 		const mockGetMethodDescriptor = documentation.getMethodDescriptor as jest.Mock
 		mockGetMethodDescriptor.mockImplementation((name: string) => {
 			mockMethodDescriptor.name = name
@@ -106,6 +106,24 @@ describe('methodHandler', () => {
       `
 			tester(src, {
 				name: 'testArrowFunction'
+			})
+		})
+
+		it('should return the method if it is a returned function', () => {
+			const src = `
+      export default {
+        methods: {
+          /**
+           * @public
+           */
+          testHighFunction: waitFor('thingToWait', () => {
+            return 'test';
+          }),
+        }
+      }
+      `
+			tester(src, {
+				name: 'testHighFunction'
 			})
 		})
 	})

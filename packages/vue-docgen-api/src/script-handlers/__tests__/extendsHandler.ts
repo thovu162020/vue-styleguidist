@@ -15,7 +15,7 @@ describe('extendsHandler', () => {
 	let resolveRequiredMock: jest.Mock
 	let mockResolvePathFrom: jest.Mock
 	let mockParse: jest.Mock
-	const doc = new Documentation()
+	const doc = new Documentation('dummy/path')
 	beforeEach(() => {
 		resolveRequiredMock = (<unknown>resolveRequired) as jest.Mock<
 			(ast: bt.File, varNameFilter?: string[]) => { [key: string]: string }
@@ -35,7 +35,7 @@ describe('extendsHandler', () => {
 
 	async function parseItExtends(src: string) {
 		const ast = babylon().parse(src)
-		const path = resolveExportedComponent(ast).get('default')
+		const path = resolveExportedComponent(ast)[0].get('default')
 		if (path) {
 			await extendsHandler(doc, path, ast, {
 				filePath: '',

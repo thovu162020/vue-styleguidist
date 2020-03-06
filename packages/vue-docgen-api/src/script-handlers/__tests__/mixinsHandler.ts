@@ -15,7 +15,7 @@ describe('mixinsHandler', () => {
 	let resolveRequiredMock: jest.Mock
 	let mockResolvePathFrom: jest.Mock
 	let mockParse: jest.Mock
-	const doc = new Documentation()
+	const doc = new Documentation('dummy/path')
 	beforeEach(() => {
 		resolveRequiredMock = (<unknown>resolveRequired) as jest.Mock<
 			(ast: bt.File, varNameFilter?: string[]) => { [key: string]: string }
@@ -55,7 +55,7 @@ describe('mixinsHandler', () => {
 		].join('\n')
 	])('should resolve extended modules variables', async (src, done) => {
 		const ast = babelParser().parse(src)
-		const path = resolveExportedComponent(ast).get('default')
+		const path = resolveExportedComponent(ast)[0].get('default')
 		if (path) {
 			await mixinsHandler(doc, path, ast, {
 				filePath: '',
@@ -80,7 +80,7 @@ describe('mixinsHandler', () => {
 			'}'
 		].join('\n')
 		const ast = babelParser().parse(src)
-		const path = resolveExportedComponent(ast).get('default')
+		const path = resolveExportedComponent(ast)[0].get('default')
 		if (!path) {
 			done.fail()
 			return
@@ -107,7 +107,7 @@ describe('mixinsHandler', () => {
 			'}'
 		].join('\n')
 		const ast = babelParser().parse(src)
-		const path = resolveExportedComponent(ast).get('default')
+		const path = resolveExportedComponent(ast)[0].get('default')
 		if (!path) {
 			done.fail()
 			return
@@ -130,7 +130,7 @@ describe('mixinsHandler', () => {
 			'}'
 		].join('\n')
 		const ast = babelParser().parse(src)
-		const path = resolveExportedComponent(ast).get('default')
+		const path = resolveExportedComponent(ast)[0].get('default')
 		if (!path) {
 			done.fail()
 			return

@@ -6,7 +6,7 @@ import slotHandler from '../slotHandler'
 describe('slotHandler', () => {
 	let doc: Documentation
 	beforeEach(() => {
-		doc = new Documentation()
+		doc = new Documentation('dummy/path')
 	})
 
 	it('should pick comments at the beginning of templates', done => {
@@ -23,7 +23,7 @@ describe('slotHandler', () => {
 		if (ast) {
 			traverse(ast, doc, [slotHandler], {
 				functional: false,
-				rootLeadingComment: '@slot first slot found'
+				rootLeadingComment: ['@slot first slot found']
 			})
 			expect(doc.toObject().slots).toMatchObject([
 				{ name: 'first', description: 'first slot found' }
@@ -46,7 +46,7 @@ describe('slotHandler', () => {
 			{ comments: true }
 		).ast
 		if (ast) {
-			traverse(ast, doc, [slotHandler], { functional: false, rootLeadingComment: '' })
+			traverse(ast, doc, [slotHandler], { functional: false, rootLeadingComment: [] })
 			expect(doc.toObject().slots).toMatchObject([
 				{ name: 'default', description: 'a default slot' }
 			])
@@ -68,7 +68,7 @@ describe('slotHandler', () => {
 			{ comments: true }
 		).ast
 		if (ast) {
-			traverse(ast, doc, [slotHandler], { functional: false, rootLeadingComment: '' })
+			traverse(ast, doc, [slotHandler], { functional: false, rootLeadingComment: [] })
 			expect(doc.toObject().slots).toMatchObject([
 				{
 					name: 'oeuf',
@@ -93,7 +93,7 @@ describe('slotHandler', () => {
 				{ comments: true }
 			).ast
 			if (ast) {
-				traverse(ast, doc, [slotHandler], { functional: false, rootLeadingComment: '' })
+				traverse(ast, doc, [slotHandler], { functional: false, rootLeadingComment: [] })
 				expect(doc.toObject().slots).toMatchObject([
 					{
 						name: 'oeuf',
@@ -122,7 +122,7 @@ describe('slotHandler', () => {
 				{ comments: true }
 			).ast
 			if (ast) {
-				traverse(ast, doc, [slotHandler], { functional: false, rootLeadingComment: '' })
+				traverse(ast, doc, [slotHandler], { functional: false, rootLeadingComment: [] })
 				const slots = doc.toObject().slots || []
 				expect(slots.filter(s => s.name === 'bound')[0].bindings).toMatchObject([
 					{
@@ -146,7 +146,7 @@ describe('slotHandler', () => {
 				{ comments: true }
 			).ast
 			if (ast) {
-				traverse(ast, doc, [slotHandler], { functional: false, rootLeadingComment: '' })
+				traverse(ast, doc, [slotHandler], { functional: false, rootLeadingComment: [] })
 				const slots = doc.toObject().slots || []
 				expect(slots.filter(s => s.name === 'bound')[0].bindings).toMatchObject([
 					{
@@ -177,7 +177,7 @@ describe('slotHandler', () => {
 				{ comments: true }
 			).ast
 			if (ast) {
-				traverse(ast, doc, [slotHandler], { functional: false, rootLeadingComment: '' })
+				traverse(ast, doc, [slotHandler], { functional: false, rootLeadingComment: [] })
 				const slots = doc.toObject().slots || []
 				expect(slots.filter(s => s.name === 'bound')[0].bindings).toMatchObject([
 					{
@@ -189,6 +189,58 @@ describe('slotHandler', () => {
 						description: 'text of the menu item'
 					}
 				])
+				done()
+			} else {
+				done.fail()
+			}
+		})
+
+		it('should not fail on non-dcumented slots', done => {
+			const ast = compile(
+				[
+					'<div>', //
+					'	<!-- test -->', //
+					'  <slot />',
+					'</div>'
+				].join('\n'),
+				{ comments: true }
+			).ast
+			if (ast) {
+				traverse(ast, doc, [slotHandler], { functional: false, rootLeadingComment: [] })
+				const slots = doc.toObject().slots || []
+				expect(slots.length).toBe(1)
+				done()
+			} else {
+				done.fail()
+			}
+		})
+
+		it('should extract tags from a slot', done => {
+			const ast = compile(
+				[
+					'<div>', //
+					'	<!--',
+					'		@slot',
+					'		@ignore',
+					'    -->', //
+					'  <slot />',
+					'</div>'
+				].join('\n'),
+				{ comments: true }
+			).ast
+			if (ast) {
+				traverse(ast, doc, [slotHandler], { functional: false, rootLeadingComment: [] })
+				const slots = doc.toObject().slots || []
+				expect(slots[0].tags).toMatchInlineSnapshot(`
+			Object {
+			  "ignore": Array [
+			    Object {
+			      "description": true,
+			      "title": "ignore",
+			    },
+			  ],
+			}
+		`)
 				done()
 			} else {
 				done.fail()

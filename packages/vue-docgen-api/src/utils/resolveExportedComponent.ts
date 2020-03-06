@@ -5,19 +5,40 @@ import Map from 'ts-map'
 import isExportedAssignment from './isExportedAssignment'
 import resolveExportDeclaration from './resolveExportDeclaration'
 import resolveIdentifier from './resolveIdentifier'
+import resolveRequired, { ImportedVariableSet } from './resolveRequired'
 
 function ignore(): boolean {
 	return false
+}
+
+/**
+ * List of all keys that could contain documentation
+ */
+const VUE_COMPONENTS_KEYS = ['data', 'props', 'methods', 'computed']
+
+function isObjectExpressionComponentDefinition(node: bt.ObjectExpression): boolean {
+	return (
+		// export const test = {}
+		node.properties.length === 0 ||
+		// export const compo = {data(){ return {cpm:"Button"}}
+		node.properties.some(
+			p =>
+				(bt.isObjectMethod(p) || bt.isObjectProperty(p)) && VUE_COMPONENTS_KEYS.includes(p.key.name)
+		)
+	)
 }
 
 function isComponentDefinition(path: NodePath): boolean {
 	const { node } = path
 
 	return (
-		// export default {}
+		// export default {} (always exported even when empty)
 		bt.isObjectExpression(node) ||
-		// export const myComp = {}
-		(bt.isVariableDeclarator(node) && node.init && bt.isObjectExpression(node.init)) ||
+		// export const myComp = {} (exported only when there is a componente definition or if empty)
+		(bt.isVariableDeclarator(node) &&
+			node.init &&
+			bt.isObjectExpression(node.init) &&
+			isObjectExpressionComponentDefinition(node.init)) ||
 		// export default class MyComp extends VueComp
 		bt.isClassDeclaration(node) ||
 		// export default whatever.extend({})
@@ -36,8 +57,11 @@ function isComponentDefinition(path: NodePath): boolean {
  * export default Definition;
  * export var Definition = ...;
  */
-export default function resolveExportedComponent(ast: bt.File): Map<string, NodePath> {
+export default function resolveExportedComponent(
+	ast: bt.File
+): [Map<string, NodePath>, ImportedVariableSet] {
 	const components = new Map<string, NodePath>()
+	const nonComponentsIdentifiers: string[] = []
 
 	function setComponent(exportName: string, definition: NodePath) {
 		if (definition && !components.get(exportName)) {
@@ -52,8 +76,12 @@ export default function resolveExportedComponent(ast: bt.File): Map<string, Node
 
 		definitions.forEach((definition: NodePath, name: string) => {
 			const realDef = resolveIdentifier(ast, definition)
-			if (realDef && isComponentDefinition(realDef)) {
-				setComponent(name, realDef)
+			if (realDef) {
+				if (isComponentDefinition(realDef)) {
+					setComponent(name, realDef)
+				}
+			} else {
+				nonComponentsIdentifiers.push(definition.value.name)
 			}
 		})
 		return false
@@ -92,9 +120,6 @@ export default function resolveExportedComponent(ast: bt.File): Map<string, Node
 			const pathRight = path.get('right')
 			const pathLeft = path.get('left')
 			const realComp = resolveIdentifier(ast, pathRight)
-			if (!realComp || !isComponentDefinition(realComp)) {
-				return false
-			}
 
 			const name =
 				bt.isMemberExpression(pathLeft.node) &&
@@ -103,12 +128,21 @@ export default function resolveExportedComponent(ast: bt.File): Map<string, Node
 					? pathLeft.node.property.name
 					: 'default'
 
-			setComponent(name, realComp)
+			if (realComp) {
+				if (isComponentDefinition(realComp)) {
+					setComponent(name, realComp)
+				}
+			} else {
+				nonComponentsIdentifiers.push(name)
+			}
+
 			return false
 		}
 	})
 
-	return components
+	const requiredValues = resolveRequired(ast, nonComponentsIdentifiers)
+
+	return [components, requiredValues]
 }
 
 function normalizeComponentPath(path: NodePath): NodePath {

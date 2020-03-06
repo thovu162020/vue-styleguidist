@@ -125,6 +125,14 @@ For components that do not have an example, a default one can be used. When set 
 
 When writing your own default example file, `__COMPONENT__` will be replaced by the actual component name at compile time.
 
+## `displayOrigins`
+
+Type: `Boolean`, default: `false`
+
+When turned on, displays if a prop, event, slot or methods is from the current file or is configured in a mixin or an extended component.
+
+If it is external, it displays the name of the component and on hover displays the relative path to the file.
+
 ## `getComponentPathLine`
 
 Type: `Function`, default: component file name
@@ -195,6 +203,43 @@ Type: `String[]`, default: `['**/__tests__/**']`
 Array of [glob pattern](https://github.com/isaacs/node-glob#glob-primer) that should not be included in the style guide.
 
 > **Note:** You should pass glob patterns, for example, use `**/components/Button.vue` instead of `components/Button.vue`.
+
+## `jssThemedEditor`
+
+Type: `Boolean`, default: `true`
+
+Should integrated PrismJs editors be themed using JSS in the theme option.
+
+If you want to use a theme defined in CSS, set this to false and require the CSS file in the `require` config.
+
+[prism themes repo](https://github.com/PrismJS/prism-themes/)
+
+> **Note:** There is [a bug in prism editor](https://github.com/satya164/react-simple-code-editor/issues/56) that prevents us from changing the editor's background and font-color easily. Workaround: If you get a theme with
+>
+> ```css
+> pre[class*='language-'] {
+>   padding: 1em;
+>   margin: 0.5em 0;
+>   overflow: auto;
+>   background: #1e1e1e;
+> }
+> ```
+>
+> Use the `div.prism-editor` class to change the background instead
+>
+> ```css
+> pre[class*='language-'] {
+>   padding: 1em;
+>   margin: 0.5em 0;
+>   overflow: auto;
+> }
+>
+> div.prism-editor {
+>   background: #1e1e1e;
+> }
+> ```
+>
+> checkout [examples/customised](https://github.com/vue-styleguidist/vue-styleguidist/blob/dev/examples/customised/styleguide/vsc-prism.css) for an example of implementation
 
 ## `jsxInComponents`
 

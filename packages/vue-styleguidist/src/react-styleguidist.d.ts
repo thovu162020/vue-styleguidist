@@ -96,6 +96,11 @@ declare module 'react-styleguidist/lib/loaders/utils/getImports' {
 	export default getImports
 }
 
+declare module 'react-styleguidist/lib/loaders/utils/resolveESModule' {
+	const resolveESModule: (requireRequest: string, name: string) => any[]
+	export default resolveESModule
+}
+
 // script
 
 declare module 'react-styleguidist/lib/scripts/make-webpack-config' {
@@ -211,6 +216,7 @@ declare module 'rsg-components/StyleGuide' {
 
 	const StyleGuide: FunctionComponent<{
 		codeRevision: number
+		cssRevision: string
 		config: StyleGuideStyleGuidistConfigObject
 		slots: any
 		welcomeScreen: any
@@ -228,4 +234,9 @@ declare module 'rsg-components/slots' {
 
 	const slots: (config?: slotsStyleGuidistConfigObject) => any
 	export default slots
+}
+
+declare module 'rsg-components/DuplicateDocumentationAlert' {
+	const DuplicateDocumentationAlert: (props: { duplicateDocumentationFilenames: string[] }) => any
+	export default DuplicateDocumentationAlert
 }

@@ -78,10 +78,12 @@ export async function resolveIEV(
 					}
 				})
 				try {
+					if (!validExtends(filePath)) return
 					const fullFilePath = pathResolver(filePath)
 					if (!validExtends(fullFilePath)) {
 						return
 					}
+
 					const source = await read(fullFilePath, {
 						encoding: 'utf-8'
 					})

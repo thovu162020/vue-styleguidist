@@ -9,13 +9,22 @@ import Documentation, {
 	Tag,
 	ParamTag
 } from './Documentation'
-import { DocGenOptions, parseFile, ParseOptions, parseSource as _parseSource } from './parse'
+import {
+	DocGenOptions as DCOptions,
+	parseFile,
+	ParseOptions,
+	parseSource as _parseSource
+} from './parse'
+import mergeTranslations from './mergeTranslations'
+
+export interface DocGenOptions extends DCOptions {
+	translations?: string
+}
 
 export { TemplateParserOptions } from './parse-template'
 export { ScriptHandler, TemplateHandler } from './parse'
 export {
 	ComponentDoc,
-	DocGenOptions,
 	ParseOptions,
 	Documentation,
 	BlockTag,
@@ -98,5 +107,7 @@ async function parsePrimitive(
 				validExtends: (fullFilePath: string) => !/[\\/]node_modules[\\/]/.test(fullFilePath)
 		  }
 	const docs = await createDocs(options)
-	return docs.map(d => d.toObject())
+	return docs
+		.map(d => d.toObject())
+		.map(d => (opts && opts.translations ? mergeTranslations(d, filePath, opts.translations) : d))
 }

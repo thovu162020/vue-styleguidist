@@ -1,19 +1,31 @@
+/**
+ * /!\ WARNING /!\
+ * Do not edit manually.
+ * This file is the compilation of
+ * Template: packages/vue-styleguidist/templates/StyleGuide.ts.ejs
+ * Config Data: packages/vue-styleguidist/src/scripts/schemas/config.ts
+ */
+
 import React from 'react'
 import WebpackDevServer from 'webpack-dev-server'
 import { ComponentDoc, PropDescriptor } from 'vue-docgen-api'
 import { TransformOptions } from 'buble'
-import { Styles, StyleSheet } from 'jss'
+import { Styles } from 'jss'
 import { Configuration, loader } from 'webpack'
-import { ProcessedSection, Section } from './Section'
-import { EXPAND_MODE } from './enums'
-import { Example, ExampleLoader } from './Example'
-import { ComponentProps } from './Component'
+import * as Rsg from 'react-styleguidist'
+import { RecursivePartial } from 'react-styleguidist/lib/typings/RecursivePartial'
+import { ProcessedSection } from './Section'
+import { LoaderComponentProps } from './Component'
 
 export interface StyleguidistContext extends loader.LoaderContext {
-	_styleguidist: StyleguidistConfig
+	_styleguidist: SanitizedStyleguidistConfig
 }
 
-export interface StyleguidistConfig {
+export interface BaseStyleguidistConfig
+	extends Omit<
+			Rsg.SanitizedStyleguidistConfig,
+			'sections' | 'propsParser' | 'sortProps' | 'updateDocs'
+		> {
 	/**
 	 * Your application static assets folder, will be accessible as / in the style guide dev server.
 	 */
@@ -27,7 +39,7 @@ export interface StyleguidistConfig {
 	/**
 	 * Where to find the components. Takes in a String or an Array of glob paths. Comma separated.
 	 */
-	components: () => (string | string[]) | string | string[]
+	components: (() => string[]) | string | string[]
 	configDir: string
 	context: Record<string, any>
 	contextDependencies: string[]
@@ -58,7 +70,7 @@ export interface StyleguidistConfig {
 	 * Defines the initial state of the props and methods tab
 	 * @default "collapse"
 	 */
-	exampleMode: EXPAND_MODE
+	exampleMode: Rsg.EXPAND_MODE
 	getComponentPathLine: (componentPath: string) => string
 	getExampleFilename: (componentPath: string) => string
 	/**
@@ -140,7 +152,6 @@ export interface StyleguidistConfig {
 		url: string
 		text: string
 	}
-	sections: Section[]
 	/**
 	 * Dev server host name
 	 * @default "0.0.0.0"
@@ -195,19 +206,22 @@ export interface StyleguidistConfig {
 	 * Style guide title
 	 */
 	title: string
-	updateDocs: (doc: ComponentProps, file: string) => ComponentProps
-	updateExample: (props: ExampleLoader, ressourcePath: string) => ExampleLoader
+	updateDocs: (doc: LoaderComponentProps, file: string) => LoaderComponentProps
+	updateExample: (
+		props: Pick<Rsg.CodeExample, 'content' | 'lang' | 'settings'>,
+		ressourcePath: string
+	) => Rsg.CodeExample
 	updateWebpackConfig: any
 	/**
 	 * Defines the initial state of the props and methods tab
 	 * @default "collapse"
 	 */
-	usageMode: EXPAND_MODE
+	usageMode: Rsg.EXPAND_MODE
 	/**
 	 * If set to collapse, the sidebar sections are collapsed by default. Handy when dealing with big Components bases
 	 * @default "expand"
 	 */
-	tocMode: EXPAND_MODE
+	tocMode: Rsg.EXPAND_MODE
 	/**
 	 * Should the passed filepath be parsed by docgen if mentionned extends
 	 */
@@ -226,6 +240,20 @@ export interface StyleguidistConfig {
 	 */
 	vuex: any
 	webpackConfig: Configuration
+}
+
+export interface SanitizedStyleguidistConfig extends BaseStyleguidistConfig {
+	sections: Rsg.ConfigSection[]
+}
+
+/**
+ * definition of the config object where everything is optional
+ * note that teh default example can be both a string and a boolean but ends
+ * up only being a string after sanitizing
+ */
+export interface StyleguidistConfig
+	extends RecursivePartial<Omit<SanitizedStyleguidistConfig, 'defaultExample'>> {
+	defaultExample?: string | boolean
 }
 
 export interface StyleGuideObject {
